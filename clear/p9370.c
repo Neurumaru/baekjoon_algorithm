@@ -1,17 +1,11 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 
-#define INF (1 << 24)
+#define INF 10000
 
-#define push(d) heap[++size] = d; sort_push();
-#define pop(d) d = heap[1]; heap[1] = heap[size--]; sort_pop();
+#define push(p,d) heap[++size][0] = d; heap[size][0] = p; sort();
+#define pop(p,d) d = heap[0][0]; p = heap[0][1]; heap[0][0] = heap[size][0]; heap[0][1] = heap[size--][1]; sort();
 
-typedef struct DATA {
-	int p, d;
-}data;
-
-data heap[65536];
+int heap[2048][2];
 int cost[2001][2001];
 int size;
 
@@ -19,72 +13,51 @@ int n, m, t, s, g, h;
 int s_d[2001], g_d[2001], h_d[2001];
 int result[2001];
 
-void sort_push() {
-	register int i, j;
-	data tmp;
-	
-	i = size;
-	while(i != 1) {
-		j = i / 2;
-		if(heap[i].d < heap[j].d) {
-			tmp = heap[j];
-			heap[j] = heap[i];
-			heap[i] = tmp;
-			i = j;
-		} else break;
-	}
-}
-
-void sort_pop() {
-	register int i, j;
-	data tmp;
+void sort() {
+	register int i, j, k, tmp;
 	
 	i = 1;
-	while(j = i * 2, j < size) {
-		j = heap[j].d<heap[j+1].d?j:j+1;
-		if(heap[i].d > heap[j].d) {
-			tmp = heap[j];
-			heap[j] = heap[i];
-			heap[i] = tmp;
-			i = j;
+	while(j = i, j < size) {
+		j = heap[j][0] > heap[j+1][0]?j:j+1;
+		if(heap[i][0] > heap[j][0]) {
+			for(k = 0; k < 2; k++) {
+				tmp = heap[j][k];
+				heap[j][k] = heap[i][k];
+				heap[i][k] = tmp;
+				i = j;
+			}
 		}
 		else break;
 	}
 	if(j == size)
-		if(heap[i].d > heap[j].d) {
-			tmp = heap[j];
-			heap[j] = heap[i];
-			heap[i] = tmp;
+		if(heap[i][0] > heap[j][0]) {
+			for(k = 0; k < 2; k++) {
+				tmp = heap[j][k];
+				heap[j][k] = heap[i][k];
+				heap[i][k] = tmp;
+			}
 		}
 }
 
 void dijkstra(int s, int * dist) {
-	data d, tmp;
-	int i;
+	int i, p, d;
 	
 	for(i = 1; i <= n; i++) 
 		dist[i] = INF;
-	dist[s] = 0;
-	size = 0;
-	d.p = s;
-	d.d = 0;
-	push(d);
+	push(s, 0);
 	while(size != 0) {
-		pop(d);
-		if(dist[d.p] < d.d) continue;
-		for(i = 1; i <= n; i++)
-			if(dist[i] > d.d + cost[d.p][i]) {
-				dist[i] = d.d + cost[d.p][i];
-				tmp.p = i; tmp.d = dist[i];
-				push(tmp);
+		pop(p, d);
+		if(dist[p] <= d) continue;
+		for(i = 0; i < n; i++)
+			if(dist[i] > d + cost[p][i]) {
+				dist[i] = d + cost[p][i];
+				push(i, dist[i]);
 			}
 	}
 }
 
 void main() {
 	int T, i, j, k;
-	data d;
-	
 	
 	scanf("%d", &T);
 	while(T--) {		
@@ -116,10 +89,9 @@ void main() {
 		
 		for(i = 1; i <= n; i++) {
 			if(result[i])
-				if(s_d[g] + g_d[h] + h_d[i] == s_d[i] ||
-				  s_d[h] + h_d[g] + g_d[i] == s_d[i])
+				if(s_d[g] + cost[g][h] + h_d[i] == s_d[i] ||
+				  s_d[h] + cost[h][g] + g_d[i] == s_d[i])
 					printf("%d ", i);
 		}
-		printf("\n");
 	}
 }

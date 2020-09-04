@@ -29,8 +29,7 @@ int bfs() {
 				if(visited[ax][ay][1] == 0) {
 					dist[ax][ay][1] = dist[x][y][brk] + 1;
 					visited[ax][ay][1] = 1;
-					if(brk != map[ax][ay] - '0')
-						push(ax, ay, 1);
+					push(ax, ay, 1);
 				}
 
 				if(brk == 0 && map[ax][ay] == '0') {
