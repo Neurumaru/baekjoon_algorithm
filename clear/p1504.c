@@ -1,19 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*==================================================*/
-
-#define INF 2100000000
+const int MAX_INT = 100000000;
 
 /*==================================================*/
-
-typedef struct node * NODE_PTR;
-typedef struct node {
-	int v, w;
-	NODE_PTR n;
-} NODE;
-
-/*==================================================*/
+//define struct
 
 typedef struct priority_queue * PQ_PTR;
 typedef struct priority_queue {
@@ -22,11 +13,7 @@ typedef struct priority_queue {
 } PQ;
 
 /*==================================================*/
-
-void insert(NODE_PTR * P, int u, int v, int w);
-NODE_PTR search(NODE_PTR * P, int u);
-
-/*==================================================*/
+//define function
 
 void init(PQ_PTR * ptr);
 void push(PQ_PTR ptr, int key, int data);
@@ -35,78 +22,57 @@ void extend(PQ_PTR ptr);
 
 /*==================================================*/
 
-int main(void) {
-	int V, E, K, i, u, v, w;
-	int * d;
-	NODE_PTR tmp;
-	NODE_PTR * P;
-	PQ_PTR pq;
-	
-	scanf("%d %d", &V, &E);
-	scanf("%d", &K);
-	
-	d = (int *)malloc(sizeof(int)*(V+1));
-	P = (NODE_PTR *)malloc(sizeof(NODE_PTR)*(V+1));
-	for(i = 0; i < V+1; i++) {
-		d[i] = INF;
-		P[i] = NULL;
-	}
-	for(i = 0; i < E; i++) {
-		scanf("%d %d %d", &u, &v, &w);
-		insert(P, u, v, w);
-	}
-	init(&pq);
-	
-	d[K] = 0;
-	push(pq, 0, K);
-	while(pq->size != 0) {
-		i = pq->data[0];
-		if(pq->key[0] > d[i]) {
-			pop(pq);
-			continue;
+int mcost[801];
+int cost[801][801];
+int N, E, i, j, k, l, a, b, fa, fb;
+PQ_PTR ptr;
+
+int solve(int start, int end) {
+	for(i = 1; i <= N; i++) mcost[i] = MAX_INT;
+	mcost[start] = 0;
+	push(ptr, mcost[start], start);
+	while(ptr->size != 0) {
+		i = ptr->key[0];
+		j = ptr->data[0];
+		if(i > mcost[j]) {
+			pop(ptr); continue;
 		}
-		tmp = search(P, i);
-		while(tmp != NULL) {
-			if(d[tmp->v] > d[i] + tmp->w) {
-				d[tmp->v] = d[i] + tmp->w;
-				push(pq, d[tmp->v], tmp->v);
+		for(k = 1; k <= N; k++) {
+			if(cost[j][k] + i < mcost[k]) {
+				mcost[k] = cost[j][k] + i;
+				push(ptr, mcost[k], k);
 			}
-			tmp = search(NULL, i);
 		}
-		pop(pq);
+		pop(ptr);
 	}
+	return mcost[end];
+}
+
+int main(void) {
+	scanf("%d %d", &N, &E);
+	for(i = 0; i <= N; i++)
+		for(j = 0; j <= N; j++)
+			cost[i][j] = MAX_INT;
+	for(i = 0; i < E; i++) {
+		scanf("%d %d %d", &l, &j, &k);
+		cost[l][j] = cost[j][l] = k;
+	}
+	scanf("%d %d", &a, &b);
 	
-	for(i = 1; i <= V; i++) {
-		if(d[i] != INF)
-			printf("%d\n", d[i]);
-		else
-			printf("INF\n");
-	}
+	
+	init(&ptr);
+	
+	fa = fb = solve(a, b);
+	fa += solve(1, a) + solve(b, N);
+	fb += solve(1, b) + solve(a, N);
+	
+	printf("%d", (fa>fb?fb:fa)>=MAX_INT?-1:fa>fb?fb:fa);
 	
 	return 0;
 }
 
 /*==================================================*/
-
-void insert(NODE_PTR * P, int u, int v, int w) {
-	NODE_PTR tmp;
-	if(P == NULL) return;
-	tmp = (NODE_PTR)malloc(sizeof(NODE));
-	tmp->v = v; tmp->w = w;
-	tmp->n = P[u]; P[u] = tmp;
-}
-NODE_PTR search(NODE_PTR * P, int u) {
-	static NODE_PTR static_ptr;
-	if(P == NULL) {
-		if(static_ptr == NULL) return NULL;
-		static_ptr = static_ptr->n;
-	} else {
-		static_ptr = P[u];
-	}
-	return static_ptr;
-}
-
-/*==================================================*/
+//function
 
 void init(PQ_PTR * ptr) {
 	*ptr = (PQ_PTR)malloc(sizeof(PQ));
@@ -207,3 +173,5 @@ void extend(PQ_PTR ptr) {
 	ptr->next->prev = ptr;
 	ptr->next->next = NULL;
 }
+
+/*==================================================*/
