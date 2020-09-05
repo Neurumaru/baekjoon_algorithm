@@ -4,14 +4,14 @@
 
 typedef struct DATA {
 	int key;
-}data;
+}DATA;
 
-data heap[65536];
+DATA heap[HEAP_MAX_heap_size];
 int heap_size;
 
 void sort_push() {
 	register int i, j;
-	data tmp;
+	DATA tmp;
 	
 	i = heap_size;
 	while(i != 1) {
@@ -27,7 +27,7 @@ void sort_push() {
 
 void sort_pop() {
 	register int i, j;
-	data tmp;
+	DATA tmp;
 	
 	i = 1;
 	while(j = i * 2, j < heap_size) {
