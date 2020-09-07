@@ -3,7 +3,7 @@
 
 #define INF 100000000
 
-#define STACK_MAX_SIZE 256
+#define STACK_MAX_SIZE 10000
 #define push_stack(data) stack[stack_size++] = data
 #define pop_stack(data) data = stack[--stack_size]
 #define is_empty() (stack_size == 0)
