@@ -1,6 +1,6 @@
 #define QUEUE_MAX_SIZE 250000
-#define push(data) queue[head++] = data; head %= MAX_HEIGHT
-#define pop(data) data = queue[tail++]; tail %= MAX_HEIGHT
+#define push(data) queue[head++] = data; head %= QUEUE_MAX_SIZE
+#define pop(data) data = queue[tail++]; tail %= QUEUE_MAX_SIZE
 #define is_empty() (head == tail)
 
 typedef struct DATA{
