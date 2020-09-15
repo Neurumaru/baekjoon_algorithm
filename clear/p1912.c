@@ -1,3 +1,4 @@
+/*
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -43,8 +44,7 @@ int main(void) {
 	
 	printf("%d", i);
 }
-/*
-//최적화 코드
+*/
 #include <stdio.h>
 #include <math.h>
 
@@ -67,4 +67,4 @@ int main()
 	printf("%d", ans); 
 	
 	return 0;
-}*/
+}
