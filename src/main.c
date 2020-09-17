@@ -1,70 +1,70 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-typedef struct node * node_ptr;
-typedef struct node {
-	int pos, neg;
-	node_ptr next;
-} node;
+#define QUEUE_MAX_SIZE 10000
+#define push(data) queue[head++] = data; head %= QUEUE_MAX_SIZE
+#define pop(data) data = queue[tail++]; tail %= QUEUE_MAX_SIZE
+#define is_empty() (head == tail)
 
-node_ptr new_node(int pos, int neg) {
-	node_ptr nn;
-	
-	nn = (node_ptr)malloc(sizeof(node));
-	nn->pos = pos; nn->neg = neg;
-	nn->next = NULL;
-	
-	return nn;
-}
+typedef struct DATA{
+	int x, y;
+}DATA;
+
+DATA queue[QUEUE_MAX_SIZE];
+int head, tail;
 
 int main(void) {
-	int N, i, j, sum;
-	node_ptr ptr, tmp, cur;
+	int N, i, j, k, ax, ay, cur, result;
+	int num[350];
+	int dx[] = {-1, 1, 0, 0};
+	int dy[] = {0, 0, -1, 1};
+	
+	char map[25][26];
+	
+	DATA tmp, data;
 	
 	scanf("%d", &N);
-	sum = 0;
-	cur = ptr = new_node(-1000000000, 0);
+	for(i = 0; i < N; i++)
+		scanf("%s", map[i]);
+	cur = 0;
+	
 	for(i = 0; i < N; i++) {
-		scanf("%d", &j);
-		sum += j;
-		//printf("%d %d %d\n", sum, cur->pos, cur->neg);
-		if(cur->pos < sum)
-			cur->pos = sum;
-		
-		if(cur->neg > sum) {
-			cur->next = new_node(-1000000000, sum);
-			cur=cur->next;
+		for(j = 0; j < N; j++) {
+			if(map[i][j] == '1') {
+				map[i][j] = '0';
+				result = 0;
+				tmp.x = i; tmp.y = j;
+				push(tmp);
+				while(is_empty()) {
+					pop(data);
+					for(k = 0; k < 4; k++) {
+						ax = data.x + dx[k];
+						ay = data.y + dy[k];
+						
+						if(ax < 0 || ax >= N || ay < 0 || ay >= N)
+							continue;
+						
+						if(map[ax][ay] == '1') {
+							map[ax][ay] = '0';
+							result++;
+							tmp.x = ax; tmp.y = ay;
+							push(tmp);
+						}
+					}
+				}
+				num[cur++] = result;
+			}
 		}
 	}
-	
-	i = -1000000000;
-	for(tmp = ptr; tmp != NULL; tmp=tmp->next)
-		i = i>tmp->pos-tmp->neg?i:tmp->pos-tmp->neg;
-	
-	printf("%d", i);
-}
-/*
-//최적화 코드
-#include <stdio.h>
-#include <math.h>
-
-#define max(a,b)  (((a) > (b)) ? (a) : (b))
-
-int main()
-{
-	int n;
-	int val = 0, ans = -99999999, tmp;
-	
-	scanf("%d", &n);
-	
-	for(int i = 0; i < n; i++) {
-		scanf("%d", &tmp);
-		val = max(val + tmp, tmp);
-		ans = max(ans, val);
-		printf("%d %d\n", val, ans);
+	for(i = 0; i < cur; i++) {
+		for(j = i+1; j < cur; j++) {
+			if(num[i] > num[j]) {
+				k = num[i];
+				num[i] = num[j];
+				num[j] = k;
+			}
+		}
 	}
-	
-	printf("%d", ans); 
-	
-	return 0;
-}*/
+	for(i = 0 ; i < cur; i++) {
+		printf("%d\n", num[i]);
+	}
+}
