@@ -34,7 +34,7 @@ int main(void) {
 				result = 0;
 				tmp.x = i; tmp.y = j;
 				push(tmp);
-				while(is_empty()) {
+				while(!is_empty()) {
 					pop(data);
 					for(k = 0; k < 4; k++) {
 						ax = data.x + dx[k];
@@ -64,6 +64,7 @@ int main(void) {
 			}
 		}
 	}
+	printf("%d\n", cur);
 	for(i = 0 ; i < cur; i++) {
 		printf("%d\n", num[i]);
 	}
