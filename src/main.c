@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define QUEUE_MAX_SIZE 250000
+#define QUEUE_MAX_SIZE 1000000
 #define push(data) queue[head++] = data; head %= QUEUE_MAX_SIZE
 #define pop(data) data = queue[tail++]; tail %= QUEUE_MAX_SIZE
 #define is_empty() (head == tail)
@@ -33,25 +33,24 @@ int main(void) {
 			if(map[i][j] == 1) {
 				tmp.x = i; tmp.y = j;
 				push(tmp);
-				while(!is_empty()) {
-					pop(data);
-					for(k = 0; k < 4; k++) {
-						ax = data.x + dx[k]; ay = data.y + dy[k];
-						
-						if(ax < 0 || ax >= N || ay < 0 || ay >= M)
-							continue;
+			}
+		}
+	}
 
-						if(map[ax][ay] == -1)
-							continue;
+	while(!is_empty()) {
+		pop(data);
+		for(k = 0; k < 4; k++) {
+			ax = data.x + dx[k]; ay = data.y + dy[k];
+			
+			if(ax < 0 || ax >= N || ay < 0 || ay >= M)
+				continue;
+			if(map[ax][ay] == -1)
+				continue;
 
-						if(map[ax][ay] > map[data.x][data.y]+1 || map[ax][ay] == 0) {
-							map[ax][ay] = map[data.x][data.y]+1;
-
-							tmp.x = ax; tmp.y = ay;
-							push(tmp);
-						}
-					}
-				}
+			if(map[ax][ay] > map[data.x][data.y]+1 || map[ax][ay] == 0) {
+				map[ax][ay] = map[data.x][data.y]+1;
+				tmp.x = ax; tmp.y = ay;
+				push(tmp);
 			}
 		}
 	}
