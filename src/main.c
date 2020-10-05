@@ -18,7 +18,7 @@ int main(void) {
 	int dx[] = {-1, 1, 0, 0};
 	int dy[] = {0, 0, -1, 1};
 	
-	char map[25][26];
+	char map[30][30];
 	
 	DATA tmp, data;
 	
@@ -31,7 +31,7 @@ int main(void) {
 		for(j = 0; j < N; j++) {
 			if(map[i][j] == '1') {
 				map[i][j] = '0';
-				result = 0;
+				result = 1;
 				tmp.x = i; tmp.y = j;
 				push(tmp);
 				while(!is_empty()) {
